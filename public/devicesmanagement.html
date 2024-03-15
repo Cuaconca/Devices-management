@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        />
+        <style>
+            body {
+                padding: 20px;
+            }
+            #createBtn {
+                width: 100%;
+            }
+        </style>
+        <title>Quản lý Thiết bị</title>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="mt-3 mb-4">Quản lý Thiết bị</h1>
+
+            <!-- Thanh tìm kiếm -->
+            <div class="mb-3">
+                <input
+                    type="text"
+                    class="form-control"
+                    id="searchInput"
+                    placeholder="Tìm kiếm..."
+                />
+            </div>
+            <!-- Nút Create -->
+            <!-- Nút Create -->
+            <a
+                href="devicescreate.html"
+                class="btn btn-primary"
+                id="createBtn"
+                target="_blank"
+                >Tạo sản phẩm mới</a
+            >
+
+            <!-- Danh sách Thiết bị -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">STT</th>
+                        <th scope="col">Tên</th>
+                        <th scope="col">Loại</th>
+                        <th scope="col" hidden>Mô tả</th>
+                        <th scope="col">Ngày tạo SP</th>
+                        <th scope="col">Trạng thái</th>
+                        <th scope="col">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="deviceList">
+                    <!-- Dữ liệu Thiết bị sẽ được đổ vào đây bằng JavaScript -->
+                </tbody>
+            </table>
+
+            <!-- Modal Thêm/Sửa Thiết bị -->
+            <div
+                class="modal fade"
+                id="deviceModal"
+                tabindex="-1"
+                aria-labelledby="deviceModalLabel"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deviceModalLabel">
+                                Thêm Thiết bị
+                            </h5>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Nội dung Form Thêm/Sửa Thiết bị sẽ được đổ vào đây bằng JavaScript -->
+                        </div>
+                        <div class="modal-footer">
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                            >
+                                Đóng
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                id="saveDeviceBtn"
+                            >
+                                Lưu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div
+            class="modal fade"
+            id="updateModal"
+            tabindex="-1"
+            aria-labelledby="updateModalLabel"
+            aria-hidden="true"
+        >
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModalLabel">
+                            Cập nhật Thiết bị
+                        </h5>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"
+                        ></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="updateForm">
+                            <div class="mb-3">
+                                <label for="updateName" class="form-label"
+                                    >Tên:</label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="updateName"
+                                    name="name"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="updateType" class="form-label"
+                                    >Loại:</label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="updateType"
+                                    name="type"
+                                    required
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="updateDesc" class="form-label"
+                                    >Mô tả:</label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="updateDesc"
+                                    name="desc"
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="updateDate" class="form-label"
+                                    >Ngày:</label
+                                >
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="updateDate"
+                                    name="date"
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="updateStatus" class="form-label"
+                                    >Trạng thái:</label
+                                >
+                                <select class="form-select" id="updateStatus" name="status">
+                                    <option value="Hoạt động">Hoạt động</option>
+                                    <option value="Bảo trì">Bảo trì</option>
+                                    <option value="Không hoạt động">
+                                        Không hoạt động
+                                    </option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btnUpdateForm">
+                                Lưu thay đổi
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="./devicesmanagement.js"></script>
+        <script>
+            var devices;
+
+            async function getDevices() {
+                var origin = window.location.origin;
+                return new Promise((resolve, reject) => {
+                    const resp = axios({
+                        method: "get",
+                        url: origin + "/api/v1/devices",
+                    }).then((data) => resolve(data));
+                });
+            }
+
+            async function getData() {
+                try {
+                    const data = await getDevices();
+                    devices = data.data.message;
+
+                    // Hiển thị danh sách Thiết bị
+                    const deviceListContainer =
+                        document.getElementById("deviceList");
+                    devices.forEach((device, index) => {
+                        const row = `<tr ${
+                            device.id % 2 ? `class="table-secondary"` : ``
+                        }>
+                                <th scope="row">${index + 1}</th>
+                                <td>${device.name}</td>
+                                <td>${device.type}</td>
+                                <td hidden>${device.desc}</td>
+                                <td>${device.date}</td>
+                                <td>${device.status}</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm" onclick="editDevice(event, ${
+                                        device.id
+                                    })">Sửa</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteDevice(${
+                                        device.id
+                                    })">Xóa</button>
+                                </td>
+                            </tr>`;
+                        deviceListContainer.innerHTML += row;
+                    });
+                } catch (error) {
+                    console.error("Lỗi khi lấy dữ liệu:", error);
+                }
+            }
+
+            getData();
+
+            // Hiển thị danh sách Thiết bị
+            function displayDevices(deviceList) {
+                const deviceListContainer =
+                    document.getElementById("deviceList");
+                deviceListContainer.innerHTML = ""; // Xóa nội dung cũ
+
+                deviceList.forEach((device, index) => {
+                    const row = `<tr>
+                            <th scope="row">${index + 1}</th>
+                            <td>${device.name}</td>
+                            <td>${device.type}</td>
+                            <td hidden>${device.desc}</td>
+                            <td>${device.date}</td>
+                            <td>${device.status}</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" onclick="editDevice(${
+                                    device.id
+                                })">Sửa</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteDevice(${
+                                    device.id
+                                })">Xóa</button>
+                            </td>
+                        </tr>`;
+                    deviceListContainer.innerHTML += row;
+                });
+            }
+
+            // Hàm tìm kiếm Thiết bị
+            function searchDevices(keyword) {
+                const filteredDevices = devices.filter(
+                    (device) =>
+                        device.name
+                            .toLowerCase()
+                            .includes(keyword.toLowerCase()) ||
+                        // device.type.toLowerCase().includes(keyword.toLowerCase()) ||
+                        device.status
+                            .toLowerCase()
+                            .includes(keyword.toLowerCase())
+                );
+
+                displayDevices(filteredDevices);
+            }
+
+            // Bắt sự kiện khi nhập vào ô tìm kiếm
+            document
+                .getElementById("searchInput")
+                .addEventListener("input", function () {
+                    const searchKeyword = this.value.trim();
+                    searchDevices(searchKeyword);
+                });
+
+            // Thêm Thiết bị
+            document
+                .getElementById("saveDeviceBtn")
+                .addEventListener("click", function () {
+                    // Xử lý lưu thông tin Thiết bị
+                    // Sau khi lưu, cập nhật hoặc thêm vào danh sách và đóng modal
+                    // Refresh lại danh sách hiển thị hoặc thêm mới vào DOM bằng JavaScript
+                });
+
+
+            // ====#==== Edit devices ====#====
+            // Lắng nghe sự kiện click vào nút mở modal
+            function showModal() {
+                var modal = new bootstrap.Modal(
+                    document.getElementById("updateModal")
+                );
+                modal.show();
+            };
+
+            // Lắng nghe sự kiện submit form
+            document
+                .getElementById("updateForm")
+                .addEventListener("submit", function (event) {
+                    event.preventDefault(); // Ngăn chặn form gửi đi mặc định
+
+                    // Lấy các giá trị từ form
+                    var name = document.getElementById("updateName").value;
+                    var type = document.getElementById("updateType").value;
+                    var desc = document.getElementById("updateDesc").value;
+                    var date = document.getElementById("updateDate").value;
+                    var status = document.getElementById("updateStatus").value;
+
+                    // Xử lý logic cập nhật ở đây (ví dụ: gửi yêu cầu AJAX đến máy chủ)
+                    // Sau khi cập nhật thành công, bạn có thể đóng modal bằng cách gọi:
+                    // var modal = bootstrap.Modal.getInstance(document.getElementById('updateModal'));
+                    // modal.hide();
+                });
+            // Sửa Thiết bị
+            function editDevice(event, deviceId) {
+                // Hiển thị thông tin của Thiết bị trong modal và mở modal sửa
+                showModal()
+
+                const infoDeviceElement = event.target.parentElement.parentElement
+                const dataDevice = infoDeviceElement.querySelectorAll('td')
+                // Khởi tạo đối tượng để lưu trữ dữ liệu
+                const deviceInfo = {};
+
+                // Lặp qua từng thẻ td và gán giá trị vào thuộc tính tương ứng của đối tượng
+                dataDevice.forEach((td, index) => {
+                switch (index) {
+                    case 0:
+                    deviceInfo.name = td.innerText;
+                    break;
+                    case 1:
+                    deviceInfo.type = td.innerText;
+                    break;
+                    case 2:
+                    deviceInfo.desc = td.innerText;
+                    break;
+                    case 3:
+                    deviceInfo.date = td.innerText;
+                    break;
+                    case 4:
+                    deviceInfo.status = td.innerText;
+                    break;
+                    default:
+                    break;
+                }
+                });
+
+                // Kiểm tra kết quả
+                // console.log(deviceInfo);
+                const { name, type, desc, date, status} = deviceInfo
+
+                // Update data inside modal
+                document.getElementById('updateName').value = name
+                document.getElementById('updateType').value = type
+                document.getElementById('updateDesc').value = desc
+                document.getElementById('updateDate').value = date
+                
+                const btnUpdateForm = document.getElementById('btnUpdateForm')
+                btnUpdateForm.onclick = function(event) {
+                    
+                    const updateForm = event.target.parentElement
+
+                    // Lấy các phần tử input và select trong biểu mẫu
+                    const nameInput = updateForm.querySelector('#updateName');
+                    const typeInput = updateForm.querySelector('#updateType');
+                    const descInput = updateForm.querySelector('#updateDesc');
+                    const dateInput = updateForm.querySelector('#updateDate');
+                    const statusSelect = updateForm.querySelector('#updateStatus');
+
+                    // Lấy giá trị của từng phần tử và gán vào các biến tương ứng
+                    const name = nameInput.value;
+                    const type = typeInput.value;
+                    const desc = descInput.value;
+                    const date = dateInput.value;
+                    const status = statusSelect.value;
+
+                    // Tạo đối tượng chứa thông tin thiết bị
+                    const deviceInfo = { name, type, desc, date, status };
+
+                    // Kiểm tra kết quả
+                    console.log(deviceInfo);
+                }
+            }
+
+            // Xóa Thiết bị
+            function deleteDevice(deviceId) {
+                // Xác nhận xóa Thiết bị và cập nhật lại danh sách hiển thị bằng JavaScript
+                const check = confirm(
+                    "Bạn có chắc chắn muốn xóa thiết bị này không?"
+                );
+                if (check) {
+                    const id = deviceId;
+                    var origin = window.location.origin;
+                    axios
+                        .delete(origin + `/api/v1/devices/delete/${id}`)
+                        .then(function (response) {
+                            alert(response.data.message);
+                            // Thực hiện các hành động khác sau khi xóa thành công
+                        })
+                        .catch(function (error) {
+                            console.error("Lỗi khi xóa thiết bị:", error);
+                            alert("Đã xảy ra lỗi khi xóa thiết bị");
+                        });
+                }
+            }
+        </script>
+    </body>
+</html>
