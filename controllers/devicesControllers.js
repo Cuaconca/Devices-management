@@ -59,9 +59,9 @@ module.exports.getDevice = async (req, res, next) => {
 
 module.exports.updateDevice = async (req, res, next) => {
     console.log('update router')
-    const { id } = req.params; // Lấy id của sản phẩm từ request params
-    const { name, type, desc, date, status } = req.body; // Lấy thông tin cập nhật từ request body
-
+    // const { id } = req.params; // Lấy id của sản phẩm từ request params
+    const { id , name, type, desc, date, status } = req.body; // Lấy thông tin cập nhật từ request body
+    console.log(req.body)
     try {
         const updatedDevice = await Device.findOneAndUpdate({ id: id }, { name, type, desc, date, status }, { new: true }); // Tìm và cập nhật sản phẩm với id tương ứng
         if (!updatedDevice) {

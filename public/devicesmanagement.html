@@ -129,6 +129,7 @@
                     </div>
                     <div class="modal-body">
                         <form id="updateForm">
+                            <label for="" id="updateID" hidden></label>
                             <div class="mb-3">
                                 <label for="updateName" class="form-label"
                                     >Tên:</label
@@ -179,7 +180,11 @@
                                 <label for="updateStatus" class="form-label"
                                     >Trạng thái:</label
                                 >
-                                <select class="form-select" id="updateStatus" name="status">
+                                <select
+                                    class="form-select"
+                                    id="updateStatus"
+                                    name="status"
+                                >
                                     <option value="Hoạt động">Hoạt động</option>
                                     <option value="Bảo trì">Bảo trì</option>
                                     <option value="Không hoạt động">
@@ -187,7 +192,12 @@
                                     </option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary" id="btnUpdateForm">
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                                id="btnUpdateForm"
+                                onclick="updateDevice(event)"
+                            >
                                 Lưu thay đổi
                             </button>
                         </form>
@@ -308,7 +318,6 @@
                     // Refresh lại danh sách hiển thị hoặc thêm mới vào DOM bằng JavaScript
                 });
 
-
             // ====#==== Edit devices ====#====
             // Lắng nghe sự kiện click vào nút mở modal
             function showModal() {
@@ -316,7 +325,7 @@
                     document.getElementById("updateModal")
                 );
                 modal.show();
-            };
+            }
 
             // Lắng nghe sự kiện submit form
             document
@@ -339,71 +348,86 @@
             // Sửa Thiết bị
             function editDevice(event, deviceId) {
                 // Hiển thị thông tin của Thiết bị trong modal và mở modal sửa
-                showModal()
+                showModal();
 
-                const infoDeviceElement = event.target.parentElement.parentElement
-                const dataDevice = infoDeviceElement.querySelectorAll('td')
+                const infoDeviceElement =
+                    event.target.parentElement.parentElement;
+                const dataDevice = infoDeviceElement.querySelectorAll("td");
                 // Khởi tạo đối tượng để lưu trữ dữ liệu
                 const deviceInfo = {};
 
                 // Lặp qua từng thẻ td và gán giá trị vào thuộc tính tương ứng của đối tượng
                 dataDevice.forEach((td, index) => {
-                switch (index) {
-                    case 0:
-                    deviceInfo.name = td.innerText;
-                    break;
-                    case 1:
-                    deviceInfo.type = td.innerText;
-                    break;
-                    case 2:
-                    deviceInfo.desc = td.innerText;
-                    break;
-                    case 3:
-                    deviceInfo.date = td.innerText;
-                    break;
-                    case 4:
-                    deviceInfo.status = td.innerText;
-                    break;
-                    default:
-                    break;
-                }
+                    switch (index) {
+                        case 0:
+                            deviceInfo.name = td.innerText;
+                            break;
+                        case 1:
+                            deviceInfo.type = td.innerText;
+                            break;
+                        case 2:
+                            deviceInfo.desc = td.innerText;
+                            break;
+                        case 3:
+                            deviceInfo.date = td.innerText;
+                            break;
+                        case 4:
+                            deviceInfo.status = td.innerText;
+                            break;
+                        default:
+                            break;
+                    }
                 });
 
                 // Kiểm tra kết quả
                 // console.log(deviceInfo);
-                const { name, type, desc, date, status} = deviceInfo
+                const { name, type, desc, date, status } = deviceInfo;
 
                 // Update data inside modal
-                document.getElementById('updateName').value = name
-                document.getElementById('updateType').value = type
-                document.getElementById('updateDesc').value = desc
-                document.getElementById('updateDate').value = date
-                
-                const btnUpdateForm = document.getElementById('btnUpdateForm')
-                btnUpdateForm.onclick = function(event) {
-                    
-                    const updateForm = event.target.parentElement
+                document.getElementById("updateID").innerText = deviceId
+                document.getElementById("updateName").value = name;
+                document.getElementById("updateType").value = type;
+                document.getElementById("updateDesc").value = desc;
+                document.getElementById("updateDate").value = date;
+            }
 
-                    // Lấy các phần tử input và select trong biểu mẫu
-                    const nameInput = updateForm.querySelector('#updateName');
-                    const typeInput = updateForm.querySelector('#updateType');
-                    const descInput = updateForm.querySelector('#updateDesc');
-                    const dateInput = updateForm.querySelector('#updateDate');
-                    const statusSelect = updateForm.querySelector('#updateStatus');
+            function updateDevice(event) {
+                const updateForm = event.target.parentElement;
 
-                    // Lấy giá trị của từng phần tử và gán vào các biến tương ứng
-                    const name = nameInput.value;
-                    const type = typeInput.value;
-                    const desc = descInput.value;
-                    const date = dateInput.value;
-                    const status = statusSelect.value;
+                // Lấy các phần tử input và select trong biểu mẫu
+                const idDevice = updateForm.querySelector("#updateID").innerText;
+                const nameInput = updateForm.querySelector("#updateName").value;
+                const typeInput = updateForm.querySelector("#updateType").value;
+                const descInput = updateForm.querySelector("#updateDesc").value;
+                const dateInput = updateForm.querySelector("#updateDate").value;
+                const statusSelect = updateForm.querySelector("#updateStatus").value;
 
-                    // Tạo đối tượng chứa thông tin thiết bị
-                    const deviceInfo = { name, type, desc, date, status };
+                // Tạo đối tượng chứa thông tin thiết bị
+                const deviceInfo = {id: idDevice , name: nameInput, type: typeInput, desc: descInput, date: dateInput, status: statusSelect };
 
-                    // Kiểm tra kết quả
-                    console.log(deviceInfo);
-                }
+                // Kiểm tra kết quả
+                // console.log(deviceInfo);
+                var origin = window.location.origin;
+                axios
+                    .post(origin + "/api/v1/devices/update", deviceInfo,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then((response) => {
+                        console.log(
+                            "Dữ liệu đã được gửi thành công:",
+                            response.data
+                        );
+                        location.reload()
+                    })
+                    .catch((error) => {
+                        console.error(
+                            "Đã có lỗi xảy ra khi gửi dữ liệu:",
+                            error
+                        );
+                    });
             }
 
             // Xóa Thiết bị
@@ -420,6 +444,7 @@
                         .then(function (response) {
                             alert(response.data.message);
                             // Thực hiện các hành động khác sau khi xóa thành công
+                            location.reload()
                         })
                         .catch(function (error) {
                             console.error("Lỗi khi xóa thiết bị:", error);

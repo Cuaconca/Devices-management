@@ -5,6 +5,7 @@ const path = require('path');
 
 // Cấu hình bodyparser để đọc req từ form theo method post
 const bodyParser = require('body-parser');
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Cấu hình middleware để sử dụng tệp tĩnh từ thư mục 'public'
